@@ -10,7 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.leandrolcd.loginexample.ui.login.LoginScreem
+import com.leandrolcd.loginexample.ui.login.ui.LoginScreem
+import com.leandrolcd.loginexample.ui.login.ui.LoginViewModel
 import com.leandrolcd.loginexample.ui.theme.JetPackComposeInstagramExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
 
-                    LoginScreem()
+                    LoginScreem(LoginViewModel())
                 }
             }
         }

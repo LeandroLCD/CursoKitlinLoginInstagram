@@ -1,9 +1,6 @@
-package com.leandrolcd.loginexample.ui.login
+package com.leandrolcd.loginexample.ui.login.ui
 
 import android.app.Activity
-import android.text.BoringLayout
-import android.util.Log
-import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,12 +9,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.End
@@ -29,15 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.leandrolcd.loginexample.R
-import java.util.regex.Pattern
 
-@Preview(showBackground = true)
+
 @Composable
-fun LoginScreem() {
+fun LoginScreem(loginViewModel: LoginViewModel) {
     Box(
         Modifier
             .fillMaxSize()
@@ -48,7 +42,7 @@ fun LoginScreem() {
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
         )
-        Body(Modifier.align(Center))
+        Body(Modifier.align(Center), loginViewModel)
 
         Footer(Modifier.align(Alignment.BottomCenter))
     }
@@ -59,7 +53,7 @@ fun LoginScreem() {
 //region Header
 @Composable
 fun Header(modifier: Modifier) {
-    var activity = LocalContext.current as Activity
+    val activity = LocalContext.current as Activity
     Icon(
         imageVector = Icons.Default.Close,
         contentDescription = "Close App",
@@ -70,33 +64,27 @@ fun Header(modifier: Modifier) {
 
 //region Body
 @Composable
-fun Body(modifier: Modifier) {
+fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
 
     //region States
-    var email by rememberSaveable {
-        mutableStateOf("")
-    }
+    val email:String by loginViewModel.email.observeAsState("")
 
-    var pwd by rememberSaveable {
-        mutableStateOf("")
-    }
-    var isLoginEnabled by rememberSaveable {
-        mutableStateOf(false)
-    }
+    val pwd:String by loginViewModel.password.observeAsState("")
+
+    val isLoginEnabled by loginViewModel.isLoginEnabled.observeAsState(true)
 
     //endregion
 
     Column(modifier = modifier) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.height(16.dp))
-        Email(email) { email = it
-            isLoginEnabled = enabledLogin(email, pwd)
+        Email(email) {
+            loginViewModel.onLoginChange(it, pwd)
 
         }
         Spacer(modifier = modifier.height(4.dp))
         Password(pwd) {
-            pwd = it
-            isLoginEnabled = enabledLogin(email, pwd)
+            loginViewModel.onLoginChange(email, it)
 
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -190,8 +178,7 @@ fun ForgotPassword(modifier: Modifier) {
     )
 }
 
-fun enabledLogin(email:String, password:String) =
-    Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 5
+
 
 
 
@@ -243,10 +230,10 @@ fun Password(pwd: String, function: (String) -> Unit) {
             unfocusedIndicatorColor = Color.Transparent
         ),
         trailingIcon = {
-            var image = if (passwordVisibility) {
-                Icons.Filled.VisibilityOff
+            val image = if (passwordVisibility) {
+                Icons.Rounded.Visibility
             } else {
-                Icons.Filled.Visibility
+                Icons.Rounded.Visibility
             }
             IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
                 Icon(imageVector = image, contentDescription = "Show Password")
