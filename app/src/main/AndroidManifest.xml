@@ -9,6 +9,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name =".LoginExampleApp"
         android:theme="@style/Theme.JetPackComposeInstagramExample"
         tools:targetApi="31">
         <activity
