@@ -37,14 +37,24 @@ fun LoginScreem(loginViewModel: LoginViewModel) {
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Header(
-            Modifier
-                .align(Alignment.TopEnd)
-                .padding(8.dp)
-        )
-        Body(Modifier.align(Center), loginViewModel)
+        val isLoading:Boolean by loginViewModel.isLoading.observeAsState(initial = false)
+        if(isLoading){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center), contentAlignment = Alignment.Center){
+                CircularProgressIndicator()
+            }
+        }else{
+            Header(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+            )
+            Body(Modifier.align(Center), loginViewModel)
 
-        Footer(Modifier.align(Alignment.BottomCenter))
+            Footer(Modifier.align(Alignment.BottomCenter))
+
+        }
     }
 
 
@@ -89,7 +99,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
         }
         Spacer(modifier = Modifier.height(8.dp))
         ForgotPassword(Modifier.align(End))
-        LoginButton(isLoginEnabled)
+        LoginButton(isLoginEnabled, loginViewModel)
         Spacer(modifier = Modifier.height(16.dp))
         LoginDivider()
         LoginWith()
@@ -150,9 +160,9 @@ fun LoginDivider() {
 }
 
 @Composable
-fun LoginButton(enable: Boolean) {
+fun LoginButton(enable: Boolean, loginViewModel: LoginViewModel) {
     Button(
-        onClick = { }, enabled = enable, modifier = Modifier
+        onClick = { loginViewModel.onLoginCliked()}, enabled = enable, modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp), colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color(0xFF4Ea8E9),
