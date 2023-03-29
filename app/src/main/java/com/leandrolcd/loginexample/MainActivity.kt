@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
-                    LoginScreem(loginViewModel)
+                    //ColorAmimations()
+                   LoginScreem(loginViewModel)
                 }
             }
         }
